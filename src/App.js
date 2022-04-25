@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect, createContext } from "react";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import NotFound from "./components/NotFound";
+import Login from "./components/Login";
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import SignUp from "./components/SignUp";
+import Header from "./components/Header";
+import User from "./components/User";
+import ErrorBoundary from "./components/ErrorBoundary";
 
-function App() {
+export const UserTokenContext = createContext();
+
+export default function App() {
+  const [authToken, setAuthToken] = useState(localStorage.getItem('token'))
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    <Router>
+    <ErrorBoundary>
+      <UserTokenContext.Provider value={{token: authToken, setToken: setAuthToken }}>
+        <Header/>
+          <Routes>
+            <Route exact path="/" element={<Login/>}/>
+            <Route exact path="/sign-in" element={<Login/>}/>
+            <Route exact path="/sign-up" element={<SignUp/>}/>
+            <Route exact path="/users" element={<User/>}/>
+            <Route path="*" element={<NotFound/>}/>
+          </Routes>
+      </UserTokenContext.Provider>
+    </ErrorBoundary>
+  </Router>
+    </>
   );
 }
 
-export default App;
